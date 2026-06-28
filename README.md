@@ -1,1 +1,1 @@
-# ntt-boot
+# ntt-bootcamp
