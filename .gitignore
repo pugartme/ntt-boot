@@ -31,8 +31,9 @@ quarkus.log
 
 # Maven
 .mvn/
-!.mvn/wrapper/
-!.mvn/wrapper/maven-wrapper.properties
+!token/.mvn/
+!token/.mvn/wrapper/
+!token/.mvn/wrapper/maven-wrapper.properties
 !mvnw
 !mvnw.cmd
 
