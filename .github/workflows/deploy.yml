@@ -9,6 +9,8 @@ on:
 jobs:
   deploy:
     runs-on: [self-hosted, token]
+    env:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
     steps:
       - name: Checkout
@@ -30,7 +32,13 @@ jobs:
         run: podman save localhost/token-api:${TAG} -o token-api.tar
 
       - name: Import into k3s
-        run: sudo k3s ctr images import token-api.tar
+        run: k3s ctr images import token-api.tar
+
+      - name: Ensure namespace exists
+        run: kubectl create namespace cqrs-lab --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f k8s/ -n cqrs-lab
 
       - name: Update deployment image
         run: |
