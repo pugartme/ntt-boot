@@ -1,4 +1,4 @@
-package com.lab;
+package com.lab.expose;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
