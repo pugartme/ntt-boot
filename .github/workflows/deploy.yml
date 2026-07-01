@@ -32,7 +32,21 @@ jobs:
         run: podman save localhost/token-api:${TAG} -o token-api.tar
 
       - name: Import into k3s
-        run: k3s ctr images import token-api.tar
+        run: |
+          if [ -S /run/k3s/containerd/containerd.sock ]; then
+            if id -nG | grep -qw "root"; then
+              k3s ctr images import token-api.tar
+            elif [ -w /run/k3s/containerd/containerd.sock ]; then
+              k3s ctr images import token-api.tar
+            else
+              echo "Permission denied accessing /run/k3s/containerd/containerd.sock."
+              echo "Make sure the self-hosted runner user can access the k3s containerd socket or run this step with sudo."
+              exit 1
+            fi
+          else
+            echo "k3s containerd socket not found at /run/k3s/containerd/containerd.sock"
+            exit 1
+          fi
 
       - name: Ensure namespace exists
         run: kubectl create namespace cqrs-lab --dry-run=client -o yaml | kubectl apply -f -
